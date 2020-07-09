@@ -14,7 +14,7 @@ const patitentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    discharedOn: Date,
+    dischargedOn: Date,
     diedOn: Date,
     details: String
 

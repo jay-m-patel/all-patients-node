@@ -19,8 +19,8 @@ const corsOptions = {
 }
 
 const routes = require('./routes/routes.js')
-app.use(cors())
-// app.use(cors(corsOptions))
+// app.use(cors())
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(routes)
 

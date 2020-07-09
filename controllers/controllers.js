@@ -22,11 +22,9 @@ module.exports.admitNew = async ({body}, res) => {
         let savedPatient = await newPatient.save()
         
         let months = ['january','february','march','april','may','june','july','august','september','october','november','december']
-        // let thisMonth = String(savedPatient.admittedOn.getMonth() + 1) + '-' + String(savedPatient.admittedOn.getYear() + 1900)
         let thisMonth = months[savedPatient.admittedOn.getMonth()] + '-' + String(savedPatient.admittedOn.getYear() + 1900)
         
         let updatedMonthlyStat = await MonthlyStat.findOneAndUpdate({month: thisMonth}, {$inc: {total: 1}}, {new: true, upsert: true})
-        console.log(updatedMonthlyStat, 'updatedMonthlyStat admitNew')
 
         res.json({
             savedPatient,
@@ -38,13 +36,13 @@ module.exports.admitNew = async ({body}, res) => {
     }
 }
 
-module.exports.updateStatus = async ({body: {id, status, discharedOn, diedOn, details}}, res) => {
+module.exports.updateStatus = async ({body: {id, status, dischargedOn, diedOn, details}}, res) => {
     try {
         let dVar
         let dVal
         let updates = {}
         if(status) updates.status = status
-        if(discharedOn) {dVar = 'discharedOn'; dVal = discharedOn }
+        if(dischargedOn) {dVar = 'dischargedOn'; dVal = dischargedOn }
         if(diedOn) {dVar = 'diedOn'; dVal = diedOn}
         if(details) updates.details = details
 
@@ -54,13 +52,10 @@ module.exports.updateStatus = async ({body: {id, status, discharedOn, diedOn, de
             details: details 
         }, {new: true})
         
-        // let thisMonth = String(updatedPatient.admittedOn.getMonth() + 1) + '-' + String(updatedPatient.admittedOn.getYear() + 1900)
-
         let months = ['january','february','march','april','may','june','july','august','september','october','november','december']
         let thisMonth = months[updatedPatient.admittedOn.getMonth()] + '-' + String(updatedPatient.admittedOn.getYear() + 1900)
 
         let updatedMonthlyStat = await MonthlyStat.findOneAndUpdate({month: thisMonth}, {$inc: {[status]: 1}}, {new: true})
-        console.log(updatedMonthlyStat, 'updatedMonthlyStat updateStatus')
 
         res.json({
             updatedPatient,
@@ -77,9 +72,6 @@ module.exports.updateStatus = async ({body: {id, status, discharedOn, diedOn, de
 module.exports.searchPatient = async (req, res) => {
     try {
         let {query: {name}} = req
-        // let searchedResult = await Patient.find({name: name})
-
-        // let searchedResult = await Patient.find({name: {$regex: name}})
 
         let searchedResult = await Patient.find({name: {$regex: new RegExp(name, 'i')}})
 
